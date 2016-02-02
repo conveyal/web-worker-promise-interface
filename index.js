@@ -1,9 +1,6 @@
 import uuid from 'uuid'
 import workify from 'webworkify'
 
-module.exports = WebWorkerPromiseInterface
-module.exports.createHandler = createHandler
-
 class WebWorkerPromiseInterface {
   constructor (handler) {
     this.__errorHandlers = []
@@ -72,3 +69,6 @@ function createHandler (functions) {
     })
   }
 }
+
+module.exports = WebWorkerPromiseInterface
+module.exports.createHandler = createHandler
