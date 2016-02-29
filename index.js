@@ -1,7 +1,7 @@
 import uuid from 'uuid'
 import workify from 'webworkify'
 
-class WebWorkerPromiseInterface {
+export default class WebWorkerPromiseInterface {
   constructor (handler) {
     this.__errorHandlers = []
     this.__messageHandlers = []
@@ -47,7 +47,7 @@ class WebWorkerPromiseInterface {
   }
 }
 
-function createHandler (functions) {
+export function createHandler (functions) {
   return function handler (self) {
     const cache = {}
 
@@ -69,6 +69,3 @@ function createHandler (functions) {
     })
   }
 }
-
-module.exports = WebWorkerPromiseInterface
-module.exports.createHandler = createHandler
