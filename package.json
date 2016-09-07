@@ -36,7 +36,7 @@
   "dependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
     "uuid": "^2.0.1",
-    "webworkify": "^1.1.0"
+    "webworkify": "^1.4.0"
   },
   "devDependencies": {
     "babel-cli": "^6.4.5",
