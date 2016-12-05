@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/conveyal/web-worker-promise-interface",
   "dependencies": {
-    "uuid": "^2.0.1",
+    "uuid": "^3.0.1",
     "webworkify": "^1.4.0"
   },
   "standard": {
