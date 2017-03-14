@@ -3,7 +3,7 @@
   "description": "Class interface for Promisfying WebWorker handling",
   "main": "./build/index",
   "scripts": {
-    "prepublish": "mastarm prepublish index.js",
+    "prepublish": "mastarm prepublish index.js:build/index.js",
     "test": "mastarm lint",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
