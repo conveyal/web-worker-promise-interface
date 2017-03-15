@@ -9,9 +9,6 @@ export default class WebWorkerPromiseInterface {
     this.__worker.addEventListener('message', event => {
       this.__messageHandlers.forEach(handler => handler.fn(event.data))
     })
-    this.__worker.addEventListener('error', error => {
-      this.__errorHandlers.forEach(handler => handler.fn(error))
-    })
   }
 
   work ({command, message, transferrable}) {
@@ -19,24 +16,14 @@ export default class WebWorkerPromiseInterface {
       const id = uuid.v4()
       const clear = () => {
         this.__messageHandlers = this.__messageHandlers.filter(h => h.id !== id)
-        this.__errorHandlers = this.__errorHandlers.filter(h => h.id !== id)
       }
 
       this.__messageHandlers.push({
         fn: event => {
           if (event.id === id) {
             clear()
-            resolve(event.message)
-          }
-        },
-        id
-      })
-
-      this.__errorHandlers.push({
-        fn: error => {
-          if (error.id === id) {
-            clear()
-            reject(error)
+            if (event.error) reject(event.error)
+            else resolve(event.message)
           }
         },
         id
@@ -51,21 +38,29 @@ export function createHandler (functions) {
   return function handler (self) {
     const cache = {}
 
-    self.addEventListener('message', function (event) {
+    self.addEventListener('message', async function (event) {
       const {command, id, message} = event.data
-      Promise
-        .resolve(functions[command].call(null, cache, message))
-        .then(results => {
-          self.postMessage({
-            command,
-            id,
-            message: results
-          })
+
+      try {
+        const results = await functions[command].call(null, cache, message)
+        self.postMessage({
+          command,
+          id,
+          message: results
         })
-        .catch(e => {
-          e.id = id
-          throw e
+      } catch (error) {
+        // nonstandard but will just be undefined on browsers that don't support
+        const { fileName, lineNumber } = error
+        self.postMessage({
+          command,
+          id,
+          error: {
+            filename: fileName,
+            lineno: lineNumber,
+            message: error.message
+          }
         })
+      }
     })
   }
 }
