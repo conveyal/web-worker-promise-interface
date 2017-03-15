@@ -38,12 +38,12 @@ export function createHandler (functions) {
   return function handler (self) {
     const cache = {}
 
-    self.addEventListener('message', function (event) {
+    self.addEventListener('message', async function (event) {
       const {command, id, message} = event.data
 
       let results
       try {
-        results = functions[command].call(null, cache, message)
+        results = await functions[command].call(null, cache, message)
       } catch (error) {
         // nonstandard but will just be undefined on browsers that don't support
         const { fileName, lineNumber } = error
@@ -56,6 +56,8 @@ export function createHandler (functions) {
             message: error.message
           }
         })
+
+        return
       }
 
       self.postMessage({
