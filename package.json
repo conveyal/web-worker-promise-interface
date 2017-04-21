@@ -4,8 +4,11 @@
   "main": "./build/index",
   "scripts": {
     "prepublish": "mastarm prepublish index.js:build/index.js",
-    "test": "mastarm lint",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "prestart": "yarn",
+    "pretest": "yarn",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "start": "mastarm build example.js --serve",
+    "test": "mastarm lint"
   },
   "repository": {
     "type": "git",
@@ -29,7 +32,7 @@
     "parser": "babel-eslint"
   },
   "devDependencies": {
-    "mastarm": "^3.1.1",
+    "mastarm": "^3.8.0",
     "semantic-release": "^6.3.2"
   }
 }

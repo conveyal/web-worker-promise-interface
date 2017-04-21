@@ -1,14 +1,24 @@
 import uuid from 'uuid'
 import workify from 'webworkify'
 
+const LOG_ID = '__log'
+
 export default class WebWorkerPromiseInterface {
   constructor (handler) {
     this.__errorHandlers = []
     this.__messageHandlers = []
     this.__worker = workify(handler)
     this.__worker.addEventListener('message', event => {
-      this.__messageHandlers.forEach(handler => handler.fn(event.data))
+      if (event.data.id === LOG_ID) {
+        this.log(...event.data.message)
+      } else {
+        this.__messageHandlers.forEach(handler => handler.fn(event.data))
+      }
     })
+  }
+
+  log (...args) {
+    console.log(...args)
   }
 
   work ({command, message, transferrable}) {
@@ -38,11 +48,18 @@ export function createHandler (functions) {
   return function handler (self) {
     const cache = {}
 
+    function log (...args) {
+      self.postMessage({
+        id: LOG_ID,
+        message: args
+      })
+    }
+
     self.addEventListener('message', async function (event) {
       const {command, id, message} = event.data
 
       try {
-        const results = await functions[command].call(null, cache, message)
+        const results = await functions[command].call(null, cache, message, log)
         self.postMessage({
           command,
           id,
